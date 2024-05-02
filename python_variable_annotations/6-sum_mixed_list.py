@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+
+"""
+Type-annotation function with a provided sum_list and returns aa float.
+Imports List which is a list of items where all elements are of the same type.
+"""
+
+
 from typing import List, Union
 
 
