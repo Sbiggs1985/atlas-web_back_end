@@ -2,7 +2,6 @@
 
 """
 Measuring the runtime by using imports and a runtime.py file.
-Imports time; which provides various functions for working with time.
 """
 
 
@@ -13,6 +12,9 @@ from your_previous_file import wait_n
 
 
 def measure_time(n: int, max_delay: int) -> float:
+    """
+    Using the measure_time function
+    """
     start_time = time.perf_counter()
 
     asyncio.run(wait_n(n, max_delay))
