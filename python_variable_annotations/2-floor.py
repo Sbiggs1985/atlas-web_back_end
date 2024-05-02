@@ -9,4 +9,7 @@ import math
 
 
 def floor(n: float) -> int:
+    """
+    Uisng the floor function
+    """
     return math.floor(n)
