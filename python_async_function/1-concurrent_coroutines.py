@@ -4,6 +4,7 @@ This is a pain in the butt
 """
 import asyncio
 import heapq
+from typing import List
 wait_random = __import__('0-basic_async_syntax').wait_random
 
 
