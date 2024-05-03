@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
-
 """
-Executing multiple coroutines at the same time with async.
+Importing asyncio and heapq
 """
-
-
 import asyncio
-from typing import List
-from your_previous_file import wait_random
+import heapq
+from wait_random import wait_random  # Assuming this import works in your setup
 
 
 async def wait_n(n: int, max_delay: int) -> list:
     """
-    Spawns `wait_random` `n` times
+    Spawns `wait_random` `n` times with a specified `max_delay`.
     """
     coroutines = [wait_random(max_delay) for _ in range(n)]
     delays = await asyncio.gather(*coroutines)
