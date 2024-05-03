@@ -3,12 +3,10 @@
 """
 Measuring the runtime by using imports and a runtime.py file.
 """
-
-
 import time
 import asyncio
 from typing import Tuple
-from your_previous_file import wait_n
+wait_n = __import__('1-concurrent_coroutines.py').wait_n
 
 
 def measure_time(n: int, max_delay: int) -> float:
