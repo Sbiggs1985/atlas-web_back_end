@@ -6,7 +6,7 @@ Documentation
 
 import asyncio
 from typing import List
-async_generator = __import__(0-async_generator).async_generator
+rom typing import Generator
 
 
 async def async_comprehension() -> List[float]:
