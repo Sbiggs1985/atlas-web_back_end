@@ -16,7 +16,7 @@ async def wait_n(n: int, max_delay: int) -> List[float]:
 
     delays = await asyncio.gather(*tasks)
 
-    heapq: list = []
+    heap: List[float] = []
     for delay in delays:
         heapq.heappush(heap, delay)
     sorted_delays = [heapq.heappop(heap) for _ in range(len(heap))]
