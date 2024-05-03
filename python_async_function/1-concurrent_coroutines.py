@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Importing asyncio and heapq
+This is a pain in the butt
 """
 import asyncio
 import heapq
-from wait_random import wait_random  # Assuming this import works in your setup
+from my_wait_random import wait_random
 
 
 async def wait_n(n: int, max_delay: int) -> list:
     """
-    Spawns `wait_random` `n` times with a specified `max_delay`.
+    Waiting for this to be done.
     """
-    coroutines = [wait_random(max_delay) for _ in range(n)]
-    delays = await asyncio.gather(*coroutines)
+    tasks = [wait_random(max_delay) for _ in range(n)]
 
-    heap = []
+    delays = await asyncio.gather(*tasks)
+
+    heapq = []
     for delay in delays:
         heapq.heappush(heap, delay)
-
     sorted_delays = [heapq.heappop(heap) for _ in range(len(heap))]
     return sorted_delays
