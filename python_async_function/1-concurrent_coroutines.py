@@ -4,7 +4,7 @@ This is a pain in the butt
 """
 import asyncio
 import heapq
-from my_wait_random import wait_random
+import wait_random
 
 
 async def wait_n(n: int, max_delay: int) -> list:
