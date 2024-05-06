@@ -17,12 +17,10 @@ class FIFOCache(BaseCaching):
             return
 
         if key not in self.cache_data:
-            """ The key """
             if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
                 oldest_key = self.order.popleft()
                 del self.cache_data[oldest_key]
                 print("DISCARD:", oldest_key)
-
         self.cache_data[key] = item
         self.order.append(key)
 
