@@ -1,38 +1,30 @@
-#!/usr/bin/env python3
-
-""" Importing collections and base_caching """
-from collections import deque
+#!/usr/bin/python3
+""" BaseCaching module """
 from base_caching import BaseCaching
 
 
 class MRUCache(BaseCaching):
-    """Initialize the cache with a deque to track order."""
+    """ Create a class LRUCache """
     def __init__(self):
         super().__init__()
-        self.order = deque()
+        self.keys = []
 
     def put(self, key, item):
-        """Add an item to the cache."""
-        if key is None or item is None:
-            return
-
-        if key in self.cache_data:
-            self.order.remove(key)
-        self.cache_data[key] = item
-        self.order.append(key)
-
-        if len(self.cache_data) > BaseCaching.MAX_ITEMS:
-            mru_key = self.order.pop()
-            del self.cache_data[mru_key]
-            print("DISCARD:", mru_key)
+        """ Must assign to the dictionary for the key key."""
+        if key and item:
+            if len(self.cache_data) == BaseCaching.MAX_ITEMS and key not in\
+                    self.keys:
+                del_key = self.keys.pop()
+                del self.cache_data[del_key]
+                print("DISCARD: {}".format(del_key))
+            if key in self.keys:
+                self.keys.remove(key)
+            self.cache_data[key] = item
+            self.keys.append(key)
 
     def get(self, key):
-        """Retrieve an item from the cache by key."""
-        if key is None:
-            return None
-
-        if key in self.cache_data:
-            self.order.remove(key)
-            self.order.append(key)
-            return self.cache_data[key]
-        return None
+        """Must return the value"""
+        if key in self.keys:
+            self.keys.remove(key)
+            self.keys.append(key)
+        return self.cache_data.get(key)
