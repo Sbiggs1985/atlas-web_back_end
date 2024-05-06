@@ -6,8 +6,8 @@ from collections import deque
 
 
 class FIFOCache(BaseCaching):
+    """Initialize the cache with a deque to track order of insertion."""
     def __init__(self):
-        """Initialize the cache with a deque to track order of insertion."""
         super().__init__()
         self.order = deque()
 
