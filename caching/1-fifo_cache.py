@@ -4,6 +4,7 @@ from base_caching import BaseCaching
 from collections import deque
 """ Importing the base_caching and collections """
 
+
 class FIFOCache(BaseCaching):
     def __init__(self):
         """Initialize the cache with a deque to track order of insertion."""
