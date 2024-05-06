@@ -2,6 +2,7 @@
 
 """ Creating a Basic Dictionary """
 from base_caching import BaseCaching
+""" Documenting my class and creating imports"""
 
 
 class BasicCache(BaseCaching):
