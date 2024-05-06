@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
+""" Importing the base_caching and collections """
 from base_caching import BaseCaching
 from collections import deque
-""" Importing the base_caching and collections """
 
 
 class FIFOCache(BaseCaching):
