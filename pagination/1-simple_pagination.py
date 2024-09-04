@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Importing CSV, MATH, and List """
+"""Import CSV, MATH, and List."""
 
 import csv
 import math
@@ -18,6 +18,7 @@ class Server:
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
+        """My init method."""
         self.__dataset = None
 
     def dataset(self) -> List[List]:
