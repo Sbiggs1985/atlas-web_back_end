@@ -37,10 +37,10 @@ class Server:
         
         # Retrieve the dataset
         data = self.dataset()
-
+        
         # If start index is out of range, return an empty list
         if start >= len(data):
             return []
 
-        # Return the slice of the dataset
+        # Return the slice of the dataset corresponding to the start and end indices
         return data[start:end]
