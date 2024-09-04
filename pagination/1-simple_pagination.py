@@ -29,18 +29,20 @@ class Server:
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
         """Get a page from the dataset."""
         # Ensure that 'page' and 'page_size' are positive integers
-        assert isinstance(page, int) and page > 0, "page must be a positive integer"
-        assert isinstance(page_size, int) and page_size > 0, "page_size must be a positive integer"
+        assert isinstance(page, int) and page > 0, \
+            "page must be a positive integer"
+        assert isinstance(page_size, int) and page_size > 0, \
+            "page_size must be a positive integer"
 
         # Get the start and end indices for the requested page
         start, end = index_range(page, page_size)
-        
+
         # Retrieve the dataset
         data = self.dataset()
-        
+
         # If start index is out of range, return an empty list
         if start >= len(data):
             return []
 
-        # Return the slice of the dataset corresponding to the start and end indices
+        # Return the slice of the dataset
         return data[start:end]
