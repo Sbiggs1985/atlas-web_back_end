@@ -25,7 +25,12 @@ class Server:
         return self.__dataset
 
     def index_range(self, page: int, page_size: int) -> Tuple[int, int]:
-        """Assigning the values."""
+        """We are returning a Tuple with a start index and an end index.
+
+        We have providedthe args.
+
+        Returning start index and end index.
+        """
         end: int = page * page_size
         start: int = 0
         for _ in range(page - 1):
@@ -44,17 +49,19 @@ class Server:
 
     def get_hyper(self, page: int = 1, page_size: int = 10) ->\
             Dict[str, Union[List[List], None, int]]:
-        
+
         data: List = self.get_page(page, page_size)
         size_dataset: int = len(self.dataset())
         total_pages = math.ceil(size_dataset / page_size)
         prev_page = None if page - 1 == 0 else page - 1
         next_page = None if page + 1 > size_dataset or data == [] else page + 1
         page_size = 0 if data == [] else page_size
+
         pagination_info: Dict = {'page_size': page_size,
-                         'page': page,
-                         'data': data,
-                         'next_page': next_page,
-                         'prev_page': prev_page,
-                         'total_pages': total_pages}
+                                 'page': page,
+                                 'data': data,
+                                 'next_page': next_page,
+                                 'prev_page': prev_page,
+                                 'total_pages': total_pages}
+
         return pagination_info
