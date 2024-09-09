@@ -49,6 +49,7 @@ class Server:
 
     def get_hyper(self, page: int = 1, page_size: int = 10) ->\
             Dict[str, Union[List[List], None, int]]:
+        """Creating the methods for arguments."""
 
         data: List = self.get_page(page, page_size)
         size_dataset: int = len(self.dataset())
