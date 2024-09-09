@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""hypermedia pagination
+"""Pagination
 """
 import csv
 import math
