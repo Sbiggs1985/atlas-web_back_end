@@ -9,5 +9,3 @@ from typing import List
 
 
 def filter_datum(fields, redaction, message, separator):
-    pattern = r'({})=([^{sep}]+)'.format('|'.join(fields), sep=re.escape(separator))
-    return re.sub(pattern, r'\1={}'.format(redaction), message)
