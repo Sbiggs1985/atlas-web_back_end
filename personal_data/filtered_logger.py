@@ -5,5 +5,5 @@ import re
 
 
 def filter_datum(fields, redaction, message, separator):
-    pattern = '|'.join([f'{field}=.*?(?={separator}|$)' for field in fields])
-    return re.sub(pattern, lambda m: m.group(0).split('=')[0] + '=' + redaction, message)
+    pattern = r'({})=([^{sep}]+)'.format('|'.join(fields), sep=re.escape(separator))
+    return re.sub(pattern, r'\1={}'.format(redaction), message)
