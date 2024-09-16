@@ -30,6 +30,8 @@ How to send the authentication header
 
 To send an authentication header with an HTTP request, you typically include it in the Authorization header of the request. The specific method depends on the tool or programming language you're using.
 
+<hr>
+
 <h3>5. How to send the authentication header</h3>
 
 To send an authentication header with an HTTP request, you typically include it in the Authorization header of the request. The specific method depends on the tool or programming language you're using.
