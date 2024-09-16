@@ -17,7 +17,9 @@ class Auth:
         return False
 
     def authorization_header(self, request=None) -> str:
+        """A public method for auth"""
         return None
 
     def current_user(self, request=None) -> TypeVar('User'):
+        """A public method for auth"""
         return None
