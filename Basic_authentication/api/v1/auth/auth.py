@@ -13,18 +13,16 @@ User = TypeVar('User')
 class Auth:
     """Checks the authorization"""
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """This checksfor the path"""
-        if path is None or excluded_paths is None or len(excluded_paths) == 0:
+        """This checks for the path"""
+        if path is None or excluded_paths is None or not excluded_paths:
             return True
-
-        normalized_path = path if path.endswith("/") else path + "/"
-
+        normal_path = path if path.endswith("/") else path + "/"
         for excluded_path in excluded_paths:
             if excluded_path.endswith("/"):
-                if normalized_path == excluded_path:
+                if normal_path == excluded_path:
                     return False
             else:
-                if path.startswith(excluded_path):
+                if path.startwith(excluded_path):
                     return False
         return True
 
