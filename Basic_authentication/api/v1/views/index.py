@@ -27,6 +27,7 @@ def stats() -> str:
     return jsonify(stats)
 
 @app.errorhandler(401)
+    """Adding a new 401 error handler"""
 def unauthorized_error(error):
   response = jsonify({"error": "Unauthorized"})
   response.status_code = 401
