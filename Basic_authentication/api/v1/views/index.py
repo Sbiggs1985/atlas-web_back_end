@@ -26,9 +26,7 @@ def stats() -> str:
     return jsonify(stats)
 
 
-@app.errorhandler(401)
-def unauthorized_error(error):
-    """A simple Unauthorzed Error handler endpoint."""
-    response = jsonify({"error": "Unauthorized"})
-    response.status_code = 401
-    return response
+@app_views.route('/unauthorized', methods=['GET'], strict_slashes=False)
+def unauthorized_route():
+    """Unauthorized error test"""
+    abort(401)
