@@ -3,6 +3,7 @@
 """
 from flask import jsonify, abort
 from api.v1.views import app_views
+import requests
 
 
 @app_views.route('/status', methods=['GET'], strict_slashes=False)
@@ -24,3 +25,9 @@ def stats() -> str:
     stats = {}
     stats['users'] = User.count()
     return jsonify(stats)
+
+@app.errorhandler(401)
+def unauthorized_error(error):
+  response = jsonify({"error": "Unauthorized"})
+  response.status_code = 401
+  return response
