@@ -11,17 +11,13 @@ User = TypeVar('User')
 
 
 class Auth:
-    """This is the template for the auth struct"""
+    """Checks the authorization"""
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """This checks the auth for the path"""
-        if path is None or excluded_paths is None or not excluded_paths:
-            return True
-        normal_path = path if path.endswith("/") else path + "/"
-        for excluded_path in excluded_paths:
-            if excluded_path.endswith("/"):
-                if normal_path == excluded_path:
-                    return False
-            else:
-                if path.startswith(excluded_path):  # Corrected this line
-                    return False
-        return True
+        """This checksfor the path"""
+        return False
+
+    def authorization_header(self, request=None) -> str:
+        return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        return None
