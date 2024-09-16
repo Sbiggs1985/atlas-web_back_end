@@ -10,6 +10,7 @@ import os
 
 
 app = Flask(__name__)
+"""Using Flask"""
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
@@ -28,6 +29,7 @@ def Unauthorized(error) -> str:
 
 
 if __name__ == "__main__":
+    """if name = main"""
     host = getenv("API_HOST", "0.0.0.0")
     port = getenv("API_PORT", "5000")
     app.run(host=host, port=port)
