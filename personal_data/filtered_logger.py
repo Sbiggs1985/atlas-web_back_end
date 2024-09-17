@@ -11,7 +11,7 @@ PII_FIELDS: tuple = ("name", "email", "ssn", "password", "phone")
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class """
+    """Formatter class."""
 
     REDACTION = "***"
     FORMAT = "[Holberton] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
@@ -37,17 +37,17 @@ def filter_datum(fields: List[str], redaction: str, message: str,
                          field + "=" + redaction + separator, message)
     return message
 
-"""Adding this get_db function to connect to the my MySQL database. Will this work?!!!"""
-def get_db() -> mysql.connector.connection.MySQLConnection:   
 
-    """Connects to the MySQL database using environment variables."""
+def get_db() -> mysql.connector.connection.MySQLConnection:
+
+    """get_db database"""
 
     # Get database credentials from environment variables (secure)
-    username = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root")  # Default to root
+    username = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root") \
+        # Default to root
     password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
     host = os.environ.get("PERSONAL_DATA_DB_HOST", "localhost")
-    database = os.environ.get("PERSONAL_DATA_DB_NAME")   
-  # Required
+    database = os.environ.get("PERSONAL_DATA_DB_NAME")  # Required
 
     if not database:
         raise ValueError("Missing environment variable PERSONAL_DATA_DB_NAME")
@@ -58,6 +58,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:  
     )
 
     return db
+
 
 def main() -> None:
     """Main function to configure logger and process user data"""
@@ -73,7 +74,7 @@ def main() -> None:
 
 
 def get_logger() -> logging.Logger:
-    """Return a configured logger."""
+    """Configured logger."""
     log: logging.logger = logging.getLogger("user_data")
     log.setLevel(logging.INFO)
     log.propagate = False
