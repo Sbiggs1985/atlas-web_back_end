@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
-"""Basic Authentication"""
+"""Basic Authentication = I am not sure if I am doing any of this correct"""
 from sys
 import os
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
-
-# Imports modules
-"""Imports to link to additional files"""
 from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
 from api.v1.views.index import app_views
@@ -32,23 +29,19 @@ def unauthorized(error) -> str:
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """ Forbidden handler
-    """
+    """Forbidden handler"""
     return jsonify({"error": "Forbidden"}), 403
 
 
 @app.errorhandler(404)
-"""Handling 404 error"""
 def not_found(error) -> str:
     """404 error handler"""
     return jsonify({"error": "Not found"}), 404
 
+
 @app.before_request
 def before_request_func():
-    """
-    Function that runs before each request to verify the authorization
-    headers and user authentication if required for the path.
-    """
+    """Before_request"""
     if auth:
         excluded_paths = [
             '/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/'
@@ -70,6 +63,7 @@ def before_request_func():
             abort(403)
 
         print(f"Authenticated user: {current_user.email}")
+
 
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
