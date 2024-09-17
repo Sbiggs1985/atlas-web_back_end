@@ -1,95 +1,102 @@
 #!/usr/bin/env python3
-"""Personal Data."""
+"""
+This module provides tools to filter sensitive information from logs and
+handle secure database connections.
+"""
+
 import re
 import logging
-import csv
-from typing import List
+from typing import List, Tuple
 import os
 import mysql.connector
-from mysql.connector import connections
-"""Importing appropriate modules."""
+from mysql.connector import connection
 
 
 # Task 0: Function to filter sensitive fields
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
-    """Obfuscate through parameters"""
+    """
+    Returns the obfuscated log message by replacing field values with a
+    redaction string.
+    """
     for field in fields:
-        message = re.sub(field + "=.*?" + separator,
-                         field + "=" + redaction + separator, message)
+        message = re.sub(rf"(?<={field}=)[^{separator}]*", redaction, message)
     return message
 
 
-# Task 1: Redacting Formatter Class
+# Task 1: RedactingFormatter class
 class RedactingFormatter(logging.Formatter):
-    """Formatter class."""
-    REDACTION: str = "***"
-    FORMAT: str = "[Holberton] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
-    SEPARATOR: str = ";"
+    """
+    Redacting Formatter class to obfuscate sensitive information in logs.
+    """
+
+    REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
-        self.fields = List[str] = fields
+        self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        """This is recieving data"""
+        """
+        Format the log record and filter out PII fields.
+        """
         record.msg = filter_datum(self.fields, self.REDACTION, record.msg,
                                   self.SEPARATOR)
         return super().format(record)
 
 
-# Task 2: Create Logger with PII filtering
-PII_FIELDS: tuple = ("name", "email", "ssn", "password", "phone")
+# Task 2: Create logger with PII filtering
+PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
+
 
 def get_logger() -> logging.Logger:
-    """Configured logger."""
-    log: logging.logger = logging.getLogger("user_data")
-    log.setLevel(logging.INFO)
-    log.propagate = False
-
-    handler: logging.StreamHandler = logging.StreamHandler()
-    handler.setFormatter(RedactingFormatter(PII_FIELDS))
-
-    log.addHandler(handler)
-
-    return log
+    """
+    Creates a logger that obfuscates PII data in logs.
+    """
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    stream_handler = logging.StreamHandler()
+    formatter = RedactingFormatter(fields=PII_FIELDS)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+    return logger
 
 
 # Task 3: Connect to secure database
 def get_db() -> connection.MySQLConnection:
-    """Implementing the function that returns a connector to the database"""
-
-    # Get database credentials from environment variables (secure)
-    
-    db_user: str = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
-    db_password: str = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
-    db_host: str = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
-    db_name: str = os.getenv('PERSONAL_DATA_DB_NAME')
-
-    if not db_name:
-        raise ValueError("Missing environment variable PERSONAL_DATA_DB_NAME")
-
-    connection: connections.MySQLConnection = mysql.connector.connect(
-        user=db_user,
-        password=db_password,
-        host=db_host,
-        database=db_name
+    """
+    Connects to the database using credentials from environment variables.
+    """
+    return mysql.connector.connect(
+        host=os.getenv('PERSONAL_DATA_DB_HOST', 'localhost'),
+        database=os.getenv('PERSONAL_DATA_DB_NAME'),
+        user=os.getenv('PERSONAL_DATA_DB_USERNAME', 'root'),
+        password=os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
     )
-    return connection
 
 
 # Task 4: Main function to read and filter data from the database
-def main() -> None:
-    """Main function to configure logger and process user data"""
-    log: logging.logger = get_logger()
+def main():
+    """
+    Main function to read data from users table and log the filtered output.
+    """
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT COUNT(*) FROM users;")
+    cursor.execute("SELECT * FROM users;")
+    logger = get_logger()
 
     for row in cursor:
-        log.info(str(row[0]))
+        msg = (f"name={row[0]}; email={row[1]}; phone={row[2]}; ssn={row[3]}; "
+               f"password={row[4]}; ip={row[5]}; last_login={row[6]}; "
+               f"user_agent={row[7]};")
+        logger.info(msg)
+
     cursor.close()
     db.close()
+
 
 if __name__ == "__main__":
     main()
