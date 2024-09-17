@@ -1,75 +1,65 @@
 #!/usr/bin/env python3
-"""
-This module defines a simple Flask application that handles basic
-authentication and error handling. It includes endpoints for status,
-unauthorized access, and forbidden access.
-"""
+"""Function that runs before each request to ensure authentication."""
 import sys
 import os
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
-
-# Add project root to the Python path to resolve imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-
-# Import authentication modules and views
 from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
-from api.v1.views.index import app_views  # Import the blueprint from index.py
+from api.v1.views.index import app_views
 
 app = Flask(__name__)
-CORS(app)
-
-# Register the blueprint for views
 app.register_blueprint(app_views)
+CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+auth = getenv("AUTH_TYPE")
 
-# Determine which authentication type to use
-auth = None
-AUTH_TYPE = os.getenv('AUTH_TYPE')
-if AUTH_TYPE == 'basic_auth':
+if auth == "basic_auth":
+    from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
 else:
+    from api.v1.auth.auth import Auth
     auth = Auth()
 
+
 @app.errorhandler(401)
-def unauthorized(error):
-    """Handles 401 Unauthorized errors."""
+def unauthorized(error) -> str:
+    """Unauthorized handler"""
     return jsonify({"error": "Unauthorized"}), 401
 
+
 @app.errorhandler(403)
-def forbidden(error):
-    """Handles 403 Forbidden errors."""
+def forbidden(error) -> str:
+    """Forbidden handler"""
     return jsonify({"error": "Forbidden"}), 403
 
+
+@app.errorhandler(404)
+def not_found(error) -> str:
+    """404 error handler"""
+    return jsonify({"error": "Not found"}), 404
+
+
 @app.before_request
-def before_request_func():
-    """
-    Function that runs before each request to verify the authorization
-    headers and user authentication if required for the path.
-    """
-    if auth:
-        excluded_paths = [
-            '/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/'
-        ]
-        if not auth.require_auth(request.path, excluded_paths):
-            print(f"Path {request.path} does not require authentication.")
-            return
+def before_request():
+    """Before_request"""
+    if auth is None:
+        return
 
-        # Check for Authorization header
-        auth_header = auth.authorization_header(request)
-        if auth_header is None:
-            print("Authorization header missing")
-            abort(401)
+    excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/',
+                      '/api/v1/forbidden/']
+    if not auth.require_auth(request.path, excluded_paths):
+        return
+    if auth.authorization_header(request) is None:
+        abort(401)
+    if auth.current_user(request) is None:
+        abort(403)
 
-        # Check for authenticated user
-        current_user = auth.current_user(request)
-        if current_user is None:
-            print("Invalid credentials or user not found")
-            abort(403)
-
-        print(f"Authenticated user: {current_user.email}")
 
 if __name__ == "__main__":
-    host = os.getenv("API_HOST", "0.0.0.0")
-    port = os.getenv("API_PORT", "5000")
+    """
+Runs the Flask app with host and port set from environment variables.
+Defaults to '0.0.0.0' and '5000' if environment variables are not set.
+"""
+    host = getenv("API_HOST", "0.0.0.0")
+    port = getenv("API_PORT", "5000")
     app.run(host=host, port=port)
