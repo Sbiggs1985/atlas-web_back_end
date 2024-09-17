@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Basic Authentication = I am not sure if I am doing any of this correct"""
-from sys
+"""Function that runs before each request to ensure authentication."""
+import sys
 import os
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
@@ -66,6 +66,10 @@ def before_request_func():
 
 
 if __name__ == "__main__":
+    """
+Runs the Flask app with host and port set from environment variables.
+Defaults to '0.0.0.0' and '5000' if environment variables are not set.
+"""
     host = getenv("API_HOST", "0.0.0.0")
     port = getenv("API_PORT", "5000")
     app.run(host=host, port=port)
