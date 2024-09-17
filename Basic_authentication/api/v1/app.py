@@ -1,27 +1,22 @@
 #!/usr/bin/env python3
-"""Function that runs before each request to ensure authentication."""
-import sys
+"""
+Route module for the API
+"""
+from os import getenv
+from api.v1.views import app_views
+from flask import Flask, jsonify, abort, request
+from flask_cors import (CORS, cross_origin)
 import os
-from flask import Flask, jsonify, request, abort
-from flask_cors import CORS
-from api.v1.auth.auth import Auth
-from api.v1.auth.basic_auth import BasicAuth
-from api.v1.views.index import app_views
+
 
 app = Flask(__name__)
-"""Initializes the flask application"""
 app.register_blueprint(app_views)
-"""Registers the blueprint for application routes"""
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
-"""Enables resource sharing"""
 auth = getenv("AUTH_TYPE")
-"""Determines the authentication method to use"""
 
-"""If Auth type is set to basic_auth, use basic auth"""
 if auth == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
-    """Otherwise, use the default auth class"""
 else:
     from api.v1.auth.auth import Auth
     auth = Auth()
@@ -29,25 +24,28 @@ else:
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """Unauthorized handler"""
+    """ unauthorized handler
+    """
     return jsonify({"error": "Unauthorized"}), 401
 
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """Forbidden handler"""
+    """ Forbidden handler
+    """
     return jsonify({"error": "Forbidden"}), 403
 
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """404 error handler"""
+    """ Not found handler
+    """
     return jsonify({"error": "Not found"}), 404
 
 
 @app.before_request
 def before_request():
-    """Before_request"""
+    """This should find unauthorized handles"""
     if auth is None:
         return
 
@@ -62,10 +60,6 @@ def before_request():
 
 
 if __name__ == "__main__":
-    """
-Runs the Flask app with host and port set from environment variables.
-Defaults to '0.0.0.0' and '5000' if environment variables are not set.
-"""
     host = getenv("API_HOST", "0.0.0.0")
     port = getenv("API_PORT", "5000")
     app.run(host=host, port=port)
