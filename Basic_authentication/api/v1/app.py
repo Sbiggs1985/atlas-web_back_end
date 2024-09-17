@@ -37,39 +37,25 @@ def forbidden(error) -> str:
 
 
 @app.errorhandler(404)
+"""Handling 404 error"""
 def not_found(error) -> str:
     """404 error handler"""
     return jsonify({"error": "Not found"}), 404
 
-
 @app.before_request
-def before_request_func():
-    """
-    Function that runs before each request to verify the authorization
-    headers and user authentication if required for the path.
-    """
-    if auth:
-        excluded_paths = [
-            '/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/'
-        ]
-        if not auth.require_auth(request.path, excluded_paths):
-            print(f"Path {request.path} does not require authentication.")
-            return
+def before_request():
+    """Before_request"""
+    if auth is None:
+        return
 
-        # Check for Authorization header
-        auth_header = auth.authorization_header(request)
-        if auth_header is None:
-            print("Authorization header missing")
-            abort(401)
-
-        # Check for authenticated user
-        current_user = auth.current_user(request)
-        if current_user is None:
-            print("Invalid credentials or user not found")
-            abort(403)
-
-        print(f"Authenticated user: {current_user.email}")
-
+    excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/',
+                      '/api/v1/forbidden/']
+    if not auth.require_auth(request.path, excluded_paths):
+        return
+    if auth.authorization_header(request) is None:
+        abort(401)
+    if auth.current_user(request) is None:
+        abort(403)
 
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
