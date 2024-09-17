@@ -9,13 +9,19 @@ from api.v1.auth.basic_auth import BasicAuth
 from api.v1.views.index import app_views
 
 app = Flask(__name__)
+"""Initializes the flask application"""
 app.register_blueprint(app_views)
+"""Registers the blueprint for application routes"""
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+"""Enables resource sharing"""
 auth = getenv("AUTH_TYPE")
+"""Determines the authentication method to use"""
 
+"""If Auth type is set to basic_auth, use basic auth"""
 if auth == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
+    """Otherwise, use the default auth class"""
 else:
     from api.v1.auth.auth import Auth
     auth = Auth()
