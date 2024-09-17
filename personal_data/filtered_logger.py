@@ -4,6 +4,9 @@ import re
 import logging
 import csv
 from typing import List
+import os
+import mysql.connector
+from mysql.connector import connections
 """Importing appropriate modules."""
 
 
@@ -38,26 +41,27 @@ def filter_datum(fields: List[str], redaction: str, message: str,
     return message
 
 
-def get_db() -> mysql.connector.connection.MySQLConnection:
-
-    """get_db database"""
+def get_db() -> connection.MySQLConnection:
+    """Implementing the function that returns a connector to the database"""
 
     # Get database credentials from environment variables (secure)
-    username = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root") \
-        # Default to root
-    password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
-    host = os.environ.get("PERSONAL_DATA_DB_HOST", "localhost")
-    database = os.environ.get("PERSONAL_DATA_DB_NAME")  # Required
+    
+    db_user = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    db_password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    db_host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
 
     if not database:
         raise ValueError("Missing environment variable PERSONAL_DATA_DB_NAME")
 
-    # Connect to the database
-    db = mysql.connector.connect(
-        user=username, password=password, host=host, database=database
+    connection = mysql.connector.connect(
+        user=db_user,
+        password=db_password,
+        host=db_host,
+        database=db_name
     )
 
-    return db
+    return connection
 
 
 def main() -> None:
