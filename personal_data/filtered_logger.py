@@ -10,12 +10,19 @@ from mysql.connector import connections
 """Importing appropriate modules."""
 
 
-PII_FIELDS: tuple = ("name", "email", "ssn", "password", "phone")
+# Task 0: Function to filter sensitive fields
+def filter_datum(fields: List[str], redaction: str, message: str,
+                 separator: str) -> str:
+    """Obfuscate through parameters"""
+    for field in fields:
+        message = re.sub(field + "=.*?" + separator,
+                         field + "=" + redaction + separator, message)
+    return message
 
 
+# Task 1: Redacting Formatter Class
 class RedactingFormatter(logging.Formatter):
     """Formatter class."""
-
     REDACTION: str = "***"
     FORMAT: str = "[Holberton] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR: str = ";"
@@ -26,21 +33,29 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """This is recieving data"""
-        obfuscated_message: str = super().format(record)
-        return filter_datum(
-            self.fields, self.REDACTION, obfuscated_message, self.SEPARATOR
-        )
+        record.msg = filter_datum(self.fields, self.REDACTION, record.msg,
+                                  self.SEPARATOR)
+        return super().format(record)
 
 
-def filter_datum(fields: List[str], redaction: str, message: str,
-                 separator: str) -> str:
-    """Obfuscate through parameters"""
-    for field in fields:
-        message = re.sub(field + "=.*?" + separator,
-                         field + "=" + redaction + separator, message)
-    return message
+# Task 2: Create Logger with PII filtering
+PII_FIELDS: tuple = ("name", "email", "ssn", "password", "phone")
+
+def get_logger() -> logging.Logger:
+    """Configured logger."""
+    log: logging.logger = logging.getLogger("user_data")
+    log.setLevel(logging.INFO)
+    log.propagate = False
+
+    handler: logging.StreamHandler = logging.StreamHandler()
+    handler.setFormatter(RedactingFormatter(PII_FIELDS))
+
+    log.addHandler(handler)
+
+    return log
 
 
+# Task 3: Connect to secure database
 def get_db() -> connection.MySQLConnection:
     """Implementing the function that returns a connector to the database"""
 
@@ -60,10 +75,10 @@ def get_db() -> connection.MySQLConnection:
         host=db_host,
         database=db_name
     )
-
     return connection
 
 
+# Task 4: Main function to read and filter data from the database
 def main() -> None:
     """Main function to configure logger and process user data"""
     log: logging.logger = get_logger()
@@ -76,16 +91,5 @@ def main() -> None:
     cursor.close()
     db.close()
 
-
-def get_logger() -> logging.Logger:
-    """Configured logger."""
-    log: logging.logger = logging.getLogger("user_data")
-    log.setLevel(logging.INFO)
-    log.propagate = False
-
-    handler: logging.StreamHandler = logging.StreamHandler()
-    handler.setFormatter(RedactingFormatter(PII_FIELDS))
-
-    log.addHandler(handler)
-
-    return log
+if __name__ == "__main__":
+    main()
