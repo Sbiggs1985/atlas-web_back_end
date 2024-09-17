@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Basic Authentication"""
-from os import getenv
-from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request
-from flask_cors import (CORS, cross_origin)
+from sys
 import os
+from flask import Flask, jsonify, abort, request
+from flask_cors import CORS
 
+# Imports modules
+from api.v1.auth.auth import Auth
+from api.v1.auth.basic_auth import BasicAuth
+from api.v1.views.index import app_views
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
@@ -40,19 +43,32 @@ def not_found(error) -> str:
 
 
 @app.before_request
-def before_request():
-    """Before_request"""
-    if auth is None:
-        return
+def before_request_func():
+    """
+    Function that runs before each request to verify the authorization
+    headers and user authentication if required for the path.
+    """
+    if auth:
+        excluded_paths = [
+            '/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/'
+        ]
+        if not auth.require_auth(request.path, excluded_paths):
+            print(f"Path {request.path} does not require authentication.")
+            return
 
-    excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/',
-                      '/api/v1/forbidden/']
-    if not auth.require_auth(request.path, excluded_paths):
-        return
-    if auth.authorization_header(request) is None:
-        abort(401)
-    if auth.current_user(request) is None:
-        abort(403)
+        # Check for Authorization header
+        auth_header = auth.authorization_header(request)
+        if auth_header is None:
+            print("Authorization header missing")
+            abort(401)
+
+        # Check for authenticated user
+        current_user = auth.current_user(request)
+        if current_user is None:
+            print("Invalid credentials or user not found")
+            abort(403)
+
+        print(f"Authenticated user: {current_user.email}")
 
 
 if __name__ == "__main__":
