@@ -16,9 +16,9 @@ PII_FIELDS: tuple = ("name", "email", "ssn", "password", "phone")
 class RedactingFormatter(logging.Formatter):
     """Formatter class."""
 
-    REDACTION = "***"
-    FORMAT = "[Holberton] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
-    SEPARATOR = ";"
+    REDACTION: str = "***"
+    FORMAT: str = "[Holberton] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR: str = ";"
 
     def __init__(self, fields: List[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
@@ -51,10 +51,10 @@ def get_db() -> connection.MySQLConnection:
     db_host: str = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
     db_name: str = os.getenv('PERSONAL_DATA_DB_NAME')
 
-    if not database:
+    if not db_name:
         raise ValueError("Missing environment variable PERSONAL_DATA_DB_NAME")
 
-    connection = mysql.connector.connect(
+    connection: connections.MySQLConnection = mysql.connector.connect(
         user=db_user,
         password=db_password,
         host=db_host,
