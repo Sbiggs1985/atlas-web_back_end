@@ -23,12 +23,15 @@ def welcome() -> str:
 def create_user() -> str:
     """POST /users - Create a new user."""
     data = get_request_data(['email', 'password'])
+    
+    # Ensure both email and password are present
+    if not data['email'] or not data['password']:
+        return jsonify({"message": "missing email or password"}), 400
+    
     try:
-        AUTH.register_user(data['email'],
-                           data['password'])
-        return jsonify({"email": data['email'],
-                        "message": "user created"}), 200
-    except Exception:
+        AUTH.register_user(data['email'], data['password'])
+        return jsonify({"email": data['email'], "message": "user created"}), 200
+    except ValueError:
         return jsonify({"message": "email already registered"}), 400
 
 
@@ -36,6 +39,11 @@ def create_user() -> str:
 def login() -> str:
     """POST /sessions - Login a user."""
     data = get_request_data(['email', 'password'])
+    
+    # Ensure both email and password are present
+    if not data['email'] or not data['password']:
+        return jsonify({"message": "missing email or password"}), 400
+    
     if AUTH.valid_login(data['email'], data['password']):
         session_id = AUTH.create_session(data['email'])
         response = jsonify({"email": data['email'], "message": "logged in"})
@@ -69,10 +77,14 @@ def profile() -> str:
 def get_reset_password_token() -> str:
     """POST /reset_password - Get password reset token."""
     data = get_request_data(['email'])
+    
+    if not data['email']:
+        return jsonify({"message": "missing email"}), 400
+    
     try:
         token = AUTH.get_reset_password_token(data['email'])
         return jsonify({"email": data['email'], "reset_token": token}), 200
-    except Exception:
+    except ValueError:
         abort(403)
 
 
@@ -80,11 +92,14 @@ def get_reset_password_token() -> str:
 def update_password() -> str:
     """PUT /reset_password - Update user's password."""
     data = get_request_data(['email', 'reset_token', 'new_password'])
+    
+    if not data['email'] or not data['reset_token'] or not data['new_password']:
+        return jsonify({"message": "missing fields"}), 400
+    
     try:
         AUTH.update_password(data['reset_token'], data['new_password'])
-        return jsonify({"email": data['email'],
-                        "message": "Password updated"}), 200
-    except Exception:
+        return jsonify({"email": data['email'], "message": "Password updated"}), 200
+    except ValueError:
         abort(403)
 
 
