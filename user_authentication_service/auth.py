@@ -7,13 +7,16 @@ import bcrypt
 from uuid import uuid4
 from sqlalchemy.orm.exc import NoResultFound
 
+
 def _hash_password(password: str) -> str:
     """Hash password."""
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
+
 def _generate_uuid() -> str:
     """Generate UUID."""
     return str(uuid4())
+
 
 class Auth:
     """Auth: authentication database."""
@@ -38,7 +41,8 @@ class Auth:
         """Check if login credentials are valid."""
         try:
             user = self._find_user(email=email)
-            return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+            return bcrypt.checkpw(password.encode('utf-8'),
+                                  user.hashed_password)
         except ValueError:
             return False
 
@@ -79,4 +83,5 @@ class Auth:
     def update_password(self, reset_token: str, password: str) -> None:
         """Update the user's password using the reset token."""
         user = self._find_user(reset_token=reset_token)
-        self._db.update_user(user.id, hashed_password=_hash_password(password), reset_token=None)
+        self._db.update_user(user.id, hashed_password=_hash_password(password),
+                             reset_token=None)
