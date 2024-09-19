@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""This module defines a simple Flask application"""
-import sys
+"""This module defines a Flask application that handles API requests
+with authentication mechanisms such as Basic Auth and Session Auth."""
 import os
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
@@ -16,11 +16,13 @@ sys.path.append(
 )
 
 app = Flask(__name__)
+"""Initializes the flask app instance"""
 CORS(app)
 
 app.register_blueprint(app_views)
 
 auth = None
+"""Selects the appropriate mechanism"""
 AUTH_TYPE = os.getenv('AUTH_TYPE')
 
 if AUTH_TYPE == 'basic_auth':
@@ -45,7 +47,8 @@ def forbidden(error):
 
 @app.before_request
 def before_request_func():
-    """Function that runs before each request"""
+    """Runs before each request to check if authentication is required."""
+    """Aborts the request with a 401 or 403 status if authentication fails"""
     if auth:
         excluded_paths = [
             '/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/',
