@@ -19,5 +19,19 @@ class TestAccessNestedMap(unittest.TestCase):
         """Method that returns whaat it is supposed to be."""
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
+    @parameterized.expand([
+        ({}, ("a",)),               # Empty dict, "a" key missing
+        ({"a": 1}, ("a", "b")),     # Key "b" missing in nested dict
+    ])
+
+
+    def test_access_nested_map_exception(self, nested_map, path):
+        """Test that KeyError is raised when the path is not found."""
+        with self.assertRaises(KeyError) as context:
+            access_nested_map(nested_map, path)
+
+        # Check that the exception message matches the missing key
+        self.assertEqual(str(context.exception), f"'{path[-1]}'")
+
     if __name__ == "__main__":
         unittest.main()
