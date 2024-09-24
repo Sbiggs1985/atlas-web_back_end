@@ -11,10 +11,12 @@
   <li>Memoization</li>
 </ul>
 
-<h3>Learning Objective</h3>
+<h3>AtlasLearning Objective</h3>
 <ul>
   <li>The difference between unit and integration tests</li>
   <li>Common testing patterns such as mocking, parametrizations, and fixtures.</li>
 </ul>
 
-<h3>Tasks</h3>
+<h3>Task Objectives</h3>
+<p>Execute my tests with <b>$ python -m unittest path/to/test_file.py</b>
+<p>familiarize myself with <b>utils.access_nested_map</b> function.</p>
