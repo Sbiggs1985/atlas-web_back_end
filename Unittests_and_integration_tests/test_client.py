@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+"""Unittests and integration tests"""
+
 import unittest
 from unittest.mock import patch, Mock
 from utils import get_json
