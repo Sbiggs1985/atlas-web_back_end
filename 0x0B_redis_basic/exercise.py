@@ -49,7 +49,8 @@ class Cache:
             return None
 
         if fn is not None:
-            return fn(value)
+            if isinstance(value, bytes):
+                return fn(value)
 
         return value
 
