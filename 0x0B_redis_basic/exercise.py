@@ -24,7 +24,9 @@ def call_history(method: Callable) -> Callable:
         self._redis.rpush(input_key, str(args))
         output = method(self, *args, **kwargs)
         self._redis.rpush(output_key, str(output))
+
         return output
+
     return wrapper
 
 
@@ -53,7 +55,7 @@ class Cache:
         self,
         key: str,
         fn: Optional[Callable[[bytes], Union[str, int, bytes, None]]] = None
-            ) -> Optional[Union[str, int, bytes]]:
+    ) -> Optional[Union[str, int, bytes]]:
         """
         Retrieve data from Redis, optionally applying a function.
         Args: key: The key for the stored data.
@@ -70,33 +72,36 @@ class Cache:
         return value
 
     def get_str(self, key: str) -> Optional[str]:
-        """
-        Retrieve data as a UTF-8 decoded string.
-        Args: key: The key for the stored data.
-        Returns: The data as a decoded string or None.
-        """
+        """Retrieve data as a UTF-8 decoded string."""
         return self.get(key, fn=lambda d: d.decode("utf-8"))
 
     def get_int(self, key: str) -> Optional[int]:
-        """
-        Retrieve data as an integer.
-        Args: key: The key for the stored data.
-        Returns: The data as an integer or None.
-        """
+        """Retrieve data as an integer."""
         return self.get(key, fn=lambda d: int(d))
+
+
+def replay(method: Callable):
+    """
+    Display the history of calls of a particular function.
+    Args: method: The method to replay.
+    """
+    input_key = method.__qualname__ + ":inputs"
+    output_key = method.__qualname__ + ":outputs"
+
+    inputs = cache._redis.lrange(input_key, 0, -1)
+    outputs = cache._redis.lrange(output_key, 0, -1)
+
+    print(f"{method.__qualname__} was called {len(inputs)} times:")
+    for input_data, output_data in zip(inputs, outputs):
+        print(f"{method.__qualname__}(*{input_data.decode('utf-8')}) -> \
+            {output_data.decode('utf-8')}")
 
 
 if __name__ == "__main__":
     cache = Cache()
 
-    # Store some data and check the input/output history
-    cache.store(b"first")
-    cache.store(b"second")
-    cache.store(b"third")
+    cache.store("foo")
+    cache.store("bar")
+    cache.store(42)
 
-    # Retrieve history of inputs and outputs for Cache.store
-    inputs = cache._redis.lrange("Cache.store:inputs", 0, -1)
-    outputs = cache._redis.lrange("Cache.store:outputs", 0, -1)
-
-    print("Inputs:", inputs)
-    print("Outputs:", outputs)
+    replay(cache.store)
