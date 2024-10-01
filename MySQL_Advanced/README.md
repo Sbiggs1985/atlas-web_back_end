@@ -1,7 +1,6 @@
 <h1>MySQL advanced</h1>
 
-<h2>Concepts</h2>
-<p>Advanced SQL</p>
+<h2>Advanced SQL</h2>
 
 <h2>Resources</h2>
 <ul>
