@@ -1,5 +1,9 @@
--- Calculating order bands with Glam rock
-SELECT band_name, (COALESCE(split, 2020) - formed) AS lifespan
+-- Import the table from the provided dump file (replace 'metal_bands.sql.zip' with the actual path)
+IMPORT FILE 'metal_bands.sql.zip';
+
+SELECT band_name,
+       DATEDIFF(YEAR, formed, split) AS lifespan
 FROM metal_bands
-WHERE style LIKE '%Glam rock%'
+WHERE main_style = 'Glam rock';
+
 ORDER BY lifespan DESC;
