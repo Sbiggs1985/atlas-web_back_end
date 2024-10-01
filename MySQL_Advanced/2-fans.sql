@@ -1,7 +1,10 @@
--- Create the users table if it doesn't already exist
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255),
-    country ENUM('US', 'CO', 'TN') NOT NULL DEFAULT 'US'
-);
+-- Select the origin of bands and the total number of fans per country
+SELECT 
+    origin, 
+    SUM(fans) AS nb_fans
+FROM 
+    bands
+GROUP BY 
+    origin
+ORDER BY 
+    nb_fans DESC;
