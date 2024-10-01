@@ -4,7 +4,7 @@
 import redis
 import uuid
 from typing import Union, Callable, Optional
-from functools
+from functools import wraps
 
 
 def count_calls(method: Callable) -> Callable:
@@ -17,8 +17,8 @@ def count_calls(method: Callable) -> Callable:
 
 
 def call_history(method: Callable) -> Callable:
-    """Decorator to log."""
-    @functools.wraps(method)
+    """Decorator to log the input and output of the method."""
+    @wraps(method)
     def wrapper(self, *args, **kwargs):
         input_key, output_key = method.__qualname__ + \
             ":inputs", method.__qualname__ + ":outputs"
