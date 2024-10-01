@@ -16,9 +16,9 @@
   <li>Redis Crash Course Tutorial</li>
 </ul>
 
-<h3>Tasks</h3>
+<h1>Tasks</h1>
 
-<p>Task 3</p>
+<h2>Task 3</h2>
 <p>#!/usr/bin/env python3
 """ Writing a String to Redis """
 
