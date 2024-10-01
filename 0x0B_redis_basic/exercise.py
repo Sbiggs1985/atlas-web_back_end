@@ -6,21 +6,25 @@ import uuid
 from typing import Union, Callable, Optional
 from functools import wraps
 
-"""TASK 2"""
+"""Task 3"""
 
 
-def count_calls(method: Callable) -> Callable:
+def call_history(method: Callable) -> Callable:
     """
-    Decorator to count how many times a method is called.
+    Decorator to store the history of inputs and outputs for a function.
     Args: method: The method to decorate.
     Returns: A wrapped function.
     """
+
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        self._redis.incr(method.__qualname__)
-        # Call the original method
-        return method(self, *args, **kwargs)
+        input_key = method.__qualname__ + ":inputs"
+        output_key = method.__qualname__ + ":outputs"
 
+        self._redis.rpush(input_key, str(args))
+        output = method(self, *args, **kwargs)
+        self._redis.rpush(output_key, str(output))
+        return output
     return wrapper
 
 
@@ -84,15 +88,14 @@ class Cache:
 if __name__ == "__main__":
     cache = Cache()
 
-    # Test case to store data and check the count of calls
-    key1 = cache.store(b"first")
-    key2 = cache.store(b"second")
-    key3 = cache.store(b"third")
+    # Store some data and check the input/output history
+    cache.store(b"first")
+    cache.store(b"second")
+    cache.store(b"third")
 
-    # Get the number of times 'store' has been called
-    print(cache.get(cache.store.__qualname__))  # Should print 3
+    # Retrieve history of inputs and outputs for Cache.store
+    inputs = cache._redis.lrange("Cache.store:inputs", 0, -1)
+    outputs = cache._redis.lrange("Cache.store:outputs", 0, -1)
 
-    # Test retrieving values
-    print(cache.get_str(key1))  # Should print "first"
-    print(cache.get_str(key2))  # Should print "second"
-    print(cache.get_str(key3))  # Should print "third"
+    print("Inputs:", inputs)
+    print("Outputs:", outputs)
