@@ -18,12 +18,16 @@ def call_history(method: Callable) -> Callable:
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        """The wrapper"""
         input_key = method.__qualname__ + ":inputs"
         output_key = method.__qualname__ + ":outputs"
 
+        # Store the inputs (arguments) as a string in Redis
         self._redis.rpush(input_key, str(args))
+
+        # Call the original method and capture the output
         output = method(self, *args, **kwargs)
+
+        # Store the output in Redis
         self._redis.rpush(output_key, str(output))
 
         return output
@@ -40,7 +44,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    @call_history
+    @call_history  # <-- Decorate the store method with call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Store the data with a randomly generated key and return key.
@@ -89,9 +93,11 @@ def replay(method: Callable):
     input_key = method.__qualname__ + ":inputs"
     output_key = method.__qualname__ + ":outputs"
 
+    # Retrieve the input and output history from Redis
     inputs = cache._redis.lrange(input_key, 0, -1)
     outputs = cache._redis.lrange(output_key, 0, -1)
 
+    # Print the replay output
     print(f"{method.__qualname__} was called {len(inputs)} times:")
     for input_data, output_data in zip(inputs, outputs):
         print(f"{method.__qualname__}(*{input_data.decode('utf-8')}) -> \
@@ -101,8 +107,10 @@ def replay(method: Callable):
 if __name__ == "__main__":
     cache = Cache()
 
+    # Store some data
     cache.store("foo")
     cache.store("bar")
     cache.store(42)
 
+    # Replay the history of calls for Cache.store
     replay(cache.store)
