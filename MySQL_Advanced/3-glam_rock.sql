@@ -1,4 +1,4 @@
--- Import the table from the provided dump file (replace 'metal_bands.sql.zip' with the actual path)
+-- Import the table
 IMPORT FILE 'metal_bands.sql.zip';
 
 SELECT band_name,
