@@ -41,7 +41,8 @@ def not_found(error) -> str:
     """
     return jsonify({"error": "Not found"}), 404
 
-
+# Checks if authentication is required for a request by
+# Aborting with a  unauthorized error if no authorization header is found
 @app.before_request
 def before_request():
     """This should find unauthorized handles"""
