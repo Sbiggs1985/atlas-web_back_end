@@ -1,3 +1,4 @@
+// Create the database
 from pymongo import MongoClient
 
 def get_database(db_name: str):
