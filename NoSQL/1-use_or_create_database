@@ -1,33 +1,27 @@
-// Create the database
+# // Create the database
 from pymongo import MongoClient
 
 def get_database(db_name: str):
-    # Create a connection to the MongoDB server (default is localhost:27017)
-    client = MongoClient('mongodb://localhost:27017/')
-    
-    # List all databases to check if the database exists
+    client = MongoClient('mongodb+srv://test:steph@cluster0.3hkqp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+    # client = MongoClient('mongodb://127.0.0.1:27017')
     databases = client.list_database_names()
     
-    # If the database does not exist, MongoDB will create it on the fly when a document is inserted
     if db_name in databases:
         print(f"Database '{db_name}' already exists.")
     else:
         print(f"Database '{db_name}' does not exist, creating it now...")
 
-    # Access the database (it will be created if not exists after insertion)
     db = client[db_name]
-    
-    # Return the database object for further operations
+
     return db
 
 if __name__ == "__main__":
     # Set the name of the database
     database_name = "my_db"
     
-    # Get or create the database
+    # Create the database
     db = get_database(database_name)
     
-    # Insert a sample document to create the database (if it's new)
     sample_collection = db['sample_collection']
     sample_document = {"name": "MongoDB", "type": "database", "count": 1}
     sample_collection.insert_one(sample_document)
