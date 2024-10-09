@@ -1,2 +1,6 @@
-// Insert in the collection
-db.school.insert({ name : "Holberton school" })
+# // Write a script that creates or uses the database my_db:
+db.school.insert(
+    {
+        name: "Holberton school"
+    }
+);
