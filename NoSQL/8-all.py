@@ -1,8 +1,13 @@
-#   // Connect to the database and update the documents
-db = db.getSiblingDB('<database_name>');
+#!/usr/bin/env python3
+def list_all(mongo_collection):
+    """
+    Lists all documents in a MongoDB collection.
 
-#   // Define the update operation
-db.school.updateMany(
-  { name: "Holberton school" },     #   // Query to match documents
-  { $set: { address: "972 Mission street" } }  // Update operation
-);
+    :param mongo_collection: The pymongo collection object
+    :return: A list of all documents, or an empty list if no documents exist
+    """
+    # Retrieve all documents from the collection
+    documents = mongo_collection.find()
+
+    # Return a list of documents, or an empty list if no documents are found
+    return
