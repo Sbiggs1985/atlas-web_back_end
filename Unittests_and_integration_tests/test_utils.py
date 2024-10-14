@@ -11,20 +11,24 @@ from utils import memoize
 
 
 class TestClass:
-    """Class to be tested"""
+    """Class to be tested
+    This class contains methods that are tested
+    """
 
     def a_method(self):
-        # Defining the a_method
+        # Defining the a_method to return a constant
         return 42
 
     @memoize
-    # @memoize patch
     def a_property(self):
+        """Returns the result of a_method with memoization"""
         return self.a_method()
 
 
 class TestMemoize(unittest.TestCase):
-    """TestMemoize class that inherits from unittest.TestCase"""
+    """TestMemoize class that inherits from unittest.TestCase
+    This class contains unittests for the memoization functionality.
+    """
 
     @patch.object(TestClass, 'a_method', return_value=42)
     def test_memoize(self, mock_method):
@@ -44,5 +48,5 @@ class TestMemoize(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # the name = main
+    # Executes the unittests when the script is run directly.
     unittest.main()
