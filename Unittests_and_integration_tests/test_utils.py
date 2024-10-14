@@ -10,9 +10,11 @@ class TestClass:
     """Class to be tested"""
 
     def a_method(self):
+        # Defining the a_method
         return 42
 
     @memoize
+    # @memoize patch
     def a_property(self):
         return self.a_method()
 
