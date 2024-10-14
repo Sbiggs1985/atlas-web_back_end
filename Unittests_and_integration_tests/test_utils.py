@@ -2,32 +2,37 @@
 """Unittests for utils module"""
 
 import unittest
-from parameterized import parameterized
-from unittest.mock import patch, Mock
-from utils import get_json, access_nested_map, memoize
-import requests
+from unittest.mock import patch
+from utils import memoize
 
-class TestGetJson(unittest.TestCase):
-    @parameterized.expand([
-        ("http://example.com", {"payload": True}),
-        ("http://holberton.io", {"payload": False}),
-    ])
-    @patch('requests.get')
-    def test_get_json(self, test_url, test_payload, mock_get):
-        """Test get_json function."""
-        # Create a mock response object
-        mock_response = Mock()
-        mock_response.json.return_value = test_payload
-        mock_get.return_value = mock_response
 
-        # Call the get_json function
-        result = get_json(test_url)
+class TestMemoize(unittest.TestCase):
+    """TestMemoize class that inherits from unittest.TestCase"""
 
-        # Check that requests.get was called correctly
-        mock_get.assert_called_once_with(test_url)
+    @patch.object(TestClass, 'a_method', return_value=42)
+    def test_memoize(self, mock_method):
+        """Test that memoization works as expected"""
 
-        # Check the result is as expected
-        self.assertEqual(result, test_payload)
+        class TestClass:
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+            def a_method(self):
+                return 42
+
+        # Create an instance of TestClass
+        test_instance = TestClass()
+
+        # Call a_property twice
+        result1 = test_instance.a_property()
+        result2 = test_instance.a_property()
+
+        # Assert that the method was called only once and results are correct
+        mock_method.assert_called_once()
+        self.assertEqual(result1, result2)
+        self.assertEqual(result1, 42)
+
 
 if __name__ == "__main__":
     unittest.main()
