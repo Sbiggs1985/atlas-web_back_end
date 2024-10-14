@@ -1,2 +1,2 @@
-// Delete items
+#   // Delete items
 db.school.deleteMany({name: 'Holberton school'})
