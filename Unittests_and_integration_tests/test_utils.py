@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Unittests for utils module"""
+"""Unittests for utils module
+
+This module contains unittests for the utility functions
+Defined in the utils module.
+"""
 
 import unittest
 from unittest.mock import patch
