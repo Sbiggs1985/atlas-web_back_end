@@ -8,9 +8,9 @@ const app = http.createServer((req, res) => {
     res.end();
   } else if (req.url === '/students') {
     countStudents('database.csv')
-      .then(() => {
+      .then((data) => {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.write('This is the list of our students');
+        res.write(`This is the list of our students ${data}`);
         res.end();
       })
       .catch(() => {

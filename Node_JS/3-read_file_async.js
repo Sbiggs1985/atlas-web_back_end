@@ -13,7 +13,7 @@ async function countStudents(path) {
         const students = lines.slice(1).filter(line => line !== '');
 
         let output = `Number of students: ${students.length}\n`;
-
+        
         const fields = {};
 
         // Process student's data
