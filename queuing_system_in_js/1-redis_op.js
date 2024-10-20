@@ -1,33 +1,47 @@
-import redis from 'redis';
+import { createClient } from 'redis';
 
-// Create Redis client
-const client = redis.createClient();
+const client = createClient();
 
-// Connect to Redis server
 client.on('connect', () => {
-  console.log('Redis client connected to the server');
+    console.log('Redis client connected to the server');
 });
 
 client.on('error', (err) => {
-  console.log(`Redis client not connected to the server: ${err.message}`);
+    console.log(`Redis client not connected to the server: ${err.message}`);
 });
 
-// Function to display the value for a given key
-function displaySchoolValue(schoolName) {
-  client.get(schoolName, (err, reply) => {
-    if (err) {
-      console.error(`Error retrieving value for ${schoolName}:`, err);
-    } else {
-      console.log(reply);
-    }
-  });
-}
-
-// Function to set a value for a given key
+// Function to set a new school value in Redis
 function setNewSchool(schoolName, value) {
-  client.set(schoolName, value, redis.print);
+    client.set(schoolName, value, (err, reply) => {
+        if (err) {
+            console.error(`Error setting value for ${schoolName}: ${err.message}`);
+        } else {
+            console.log(`Reply: ${reply}`);
+        }
+    });
 }
 
-// Call functions as per the task
-displaySchoolValue('Holberton');
+// Function to display the value of a school from Redis
+function displaySchoolValue(schoolName) {
+    client.get(schoolName, (err, value) => {
+        if (err) {
+            console.log(`Error retrieving value for ${schoolName}: ${err.message}`);
+        } else {
+            console.log(value);
+        }
+    });
+}
+
+// Set the initial value for Holberton
+setNewSchool('Holberton', 'School');
+
+// Delay the retrieval to ensure the value is set before trying to get it
+setTimeout(() => {
+    displaySchoolValue('Holberton');
+}, 100); // Adjust time as necessary (100ms in this case)
+
+// Set new school value and display it
 setNewSchool('HolbertonSanFrancisco', '100');
+setTimeout(() => {
+    displaySchoolValue('HolbertonSanFrancisco');
+}, 100);
